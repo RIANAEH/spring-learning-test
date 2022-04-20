@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 public class HttpMethodController {
 
+    @PostMapping("/http-method/users")
     public ResponseEntity createUser(@RequestBody User user) {
         Long id = 1L;
         return ResponseEntity.created(URI.create("/users/" + id)).build();
