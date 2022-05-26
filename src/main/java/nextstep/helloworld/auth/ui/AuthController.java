@@ -9,6 +9,7 @@ import nextstep.helloworld.auth.dto.TokenResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 public class AuthController {
     private static final String SESSION_KEY = "USER";
     private AuthService authService;
-
 
     public AuthController(AuthService authService) {
         this.authService = authService;
@@ -76,9 +76,8 @@ public class AuthController {
      * }
      */
     @PostMapping("/login/token")
-    public ResponseEntity tokenLogin() {
+    public ResponseEntity<TokenResponse> tokenLogin(@RequestBody TokenRequest tokenRequest) {
         // TODO: TokenRequest 값을 메서드 파라미터로 받아오기 (hint: @RequestBody)
-        TokenRequest tokenRequest = null;
         TokenResponse tokenResponse = authService.createToken(tokenRequest);
         return ResponseEntity.ok().body(tokenResponse);
     }
@@ -91,9 +90,10 @@ public class AuthController {
      * accept: application/json
      */
     @GetMapping("/members/you")
-    public ResponseEntity findYourInfo(HttpServletRequest request) {
+    public ResponseEntity<MemberResponse> findYourInfo(HttpServletRequest request) {
         // TODO: authorization 헤더의 Bearer 값을 추출하기
-        String token = "";
+        String bearerToken = request.getHeader("authorization");
+        String token = bearerToken.substring(7);
         MemberResponse member = authService.findMemberByToken(token);
         return ResponseEntity.ok().body(member);
     }
